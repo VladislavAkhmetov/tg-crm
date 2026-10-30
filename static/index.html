@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0B0D">
+  <title>Таскер · Creative UGC CRM</title>
+  <script src="/static/telegram-web-app.js"></script>
+  <script>
+    try {
+      if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        window.Telegram.WebApp.setHeaderColor?.('#0A0B0D');
+        window.Telegram.WebApp.setBackgroundColor?.('#0A0B0D');
+      }
+    } catch(e) {}
+  </script>
+  <link rel="stylesheet" href="/static/fonts.css">
+  <link rel="stylesheet" href="/static/style.css?v=6.1.1">
+  <script src="/static/app.js?v=6.1.1" defer></script>
+</head>
+<body>
+  <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+    <symbol id="i-compress" viewBox="0 0 24 24"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-figma" viewBox="0 0 24 24"><path d="M12 3H8.5a3.5 3.5 0 0 0 0 7H12V3Zm0 0h3.5a3.5 3.5 0 0 1 0 7H12M12 10H8.5a3.5 3.5 0 0 0 0 7H12v-7Zm0 7v3.5a3.5 3.5 0 1 1-3.5-3.5"/><circle cx="15.5" cy="13.5" r="3.5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6m0-6L10 14M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="i-stats" viewBox="0 0 24 24"><path d="M5 19V11M12 19V5M19 19V8"/></symbol>
+    <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m2-15a3 3 0 0 1 0 6m1 3a5 5 0 0 1 3 4v2"/></symbol>
+    <symbol id="i-comment" viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 4V6a2 2 0 0 1 2-2Z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="2"/><rect x="14" y="4" width="6" height="6" rx="2"/><rect x="4" y="14" width="6" height="6" rx="2"/><rect x="14" y="14" width="6" height="6" rx="2"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6M8 14h8M8 17h5"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+    <symbol id="i-unarchive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="m12 11 3 3m-3-3-3 3m3-3v6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6m4-6v6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="i-bitrix" viewBox="0 0 24 24"><circle cx="12" cy="6.2" r="3.2"/><circle cx="6.5" cy="16.5" r="3.2"/><circle cx="17.5" cy="16.5" r="3.2"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+    <symbol id="i-reassign" viewBox="0 0 24 24"><path d="M2 21a8 8 0 0 1 10.821-7.487"/><path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><circle cx="10" cy="8" r="5"/></symbol>
+    <symbol id="i-chevrons-up-down" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></symbol>
+    <symbol id="i-images" viewBox="0 0 24 24"><rect width="16" height="16" x="5" y="3" rx="2"/><path d="m19 13-3.8-3.8a2 2 0 0 0-2.8 0L5 16"/><circle cx="10" cy="8" r="1.5"/><path d="M3 7v13a2 2 0 0 0 2 2h13"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></symbol>
+  </svg>
+  <div id="dev-bar" class="dev-bar hidden">
+    <label for="dev-user">Тестовый просмотр</label>
+    <select id="dev-user" onchange="switchDevUser(this.value)"><option value="admin">Админ</option><option value="designer1">Анна</option><option value="designer2">Михаил</option></select>
+  </div>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">т.</span>
+        <div class="brand-text">
+          <span class="brand-title">Таскер</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-fullscreen" class="icon-button hidden" onclick="toggleFullscreen()" aria-label="Развернуть" title="Во весь экран"><svg class="icon"><use href="#i-expand"/></svg></button>
+        <button id="btn-export" class="icon-button hidden" onclick="openExportModal()" aria-label="Экспорт отчетов" title="Экспорт отчетов"><svg class="icon"><use href="#i-download"/></svg></button>
+        <button class="icon-button" onclick="openStatsModal()" aria-label="Открыть статистику" title="Статистика"><svg class="icon"><use href="#i-stats"/></svg></button>
+        <button id="btn-team" class="icon-button hidden" onclick="openTeamModal()" aria-label="Открыть команду" title="Команда"><svg class="icon"><use href="#i-team"/></svg></button>
+      </div>
+    </header>
+    <main id="main-content">
+      <div class="page-heading">
+        <div class="page-title-group">
+          <h1>Задачи <span id="heading-task-count" class="heading-counter"></span></h1>
+          <p id="heading-subtitle" class="heading-subtitle"></p>
+        </div>
+        <button id="btn-add-pool" class="btn btn-primary-pill hidden" onclick="openAddBatchModal()" aria-label="Добавить новый пул">
+          <svg class="icon"><use href="#i-plus"/></svg><span>Пул</span>
+        </button>
+      </div>
+      <div class="feed-controls">
+        <div class="search-and-filter-row">
+          <div class="search-field">
+            <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <input type="search" id="search-input" placeholder="Артикул, пул, исполнитель" aria-label="Поиск задач" autocomplete="off" oninput="handleSearch(this.value)">
+            <button id="search-clear-btn" class="icon-button hidden" onclick="clearSearch()" aria-label="Очистить поиск"><svg class="icon"><use href="#i-close"/></svg></button>
+          </div>
+          <button id="btn-filter-trigger" class="filter-icon-btn" onclick="openFilterSheet()" aria-label="Фильтры" title="Фильтры">
+            <svg class="icon"><use href="#i-sliders"/></svg>
+            <span id="filter-indicator-dot" class="filter-indicator-dot hidden"></span>
+          </button>
+        </div>
+        <div class="scope-tabs" role="group" aria-label="Список задач">
+          <button id="tab-all" class="scope-tab active" onclick="setTab('all')" aria-pressed="true"><span class="scope-label">Все</span><span id="badge-all" class="tab-count">0</span></button>
+          <button id="tab-my" class="scope-tab" onclick="setTab('my')" aria-pressed="false"><span class="scope-label">Мои</span><span id="badge-my" class="tab-count">0</span></button>
+          <button id="tab-available" class="scope-tab" onclick="setTab('available')" aria-pressed="false"><span class="scope-label">Свободные</span><span id="badge-available" class="tab-count">0</span></button>
+        </div>
+        <div id="pool-actions-bar" class="pool-actions-bar hidden">
+          <div class="pool-actions-info">
+            <svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg>
+            <span id="pool-actions-title" class="pool-actions-title"></span>
+          </div>
+          <div class="pool-actions-buttons">
+            <a id="btn-pool-bitrix" class="btn btn-secondary btn-sm hidden" href="#" target="_blank" rel="noopener noreferrer" title="Задача в Битрикс24 (трекинг времени)">
+              <svg class="icon" aria-hidden="true"><use href="#i-bitrix"/></svg><span>Битрикс24</span>
+            </a>
+            <button id="btn-pool-export" class="btn btn-secondary btn-sm" type="button" onclick="exportCurrentPool()" title="Экспортировать этот пул">
+              <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span>Экспорт</span>
+            </button>
+            <button id="btn-pool-archive" class="btn btn-secondary btn-sm" type="button" onclick="toggleCurrentPoolArchive()">
+              <svg class="icon" aria-hidden="true"><use href="#i-archive"/></svg><span id="btn-pool-archive-label">В архив</span>
+            </button>
+            <button id="btn-pool-delete" class="btn btn-danger btn-sm" type="button" onclick="confirmDeleteCurrentPool()">
+              <svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg><span>Удалить</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="load-error" class="load-error hidden" role="alert"><span id="load-error-text"></span><button class="btn btn-secondary" onclick="retryLoad()">Повторить</button></div>
+      <div id="tasks-container" class="task-list" aria-busy="true">
+        <div class="skeleton-card" aria-hidden="true"><div></div><div></div><div></div></div>
+        <div class="skeleton-card" aria-hidden="true"><div></div><div></div><div></div></div>
+        <div class="skeleton-card" aria-hidden="true"><div></div><div></div><div></div></div>
+      </div>
+      <div id="empty-state" class="empty-state hidden"><div class="empty-icon"><svg class="icon"><use href="#i-grid"/></svg></div><h2 id="empty-title">Задач пока нет</h2><p id="empty-description"></p><button id="empty-action" class="btn btn-secondary" onclick="resetFilters()">Показать все</button></div>
+    </main>
+  </div>
+
+  <!-- Filter Sheet Modal -->
+  <div id="modal-filter" class="modal-overlay hidden">
+    <section class="modal-dialog filter-dialog" role="dialog" aria-modal="true" aria-labelledby="filter-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть фильтры"><svg class="icon"><use href="#i-close"/></svg></button>
+      <div class="filter-sheet-header">
+        <h2 id="filter-title">Фильтры</h2>
+        <button id="btn-reset-filters-sheet" class="btn-link" type="button" onclick="resetAllFiltersFromSheet()">Сбросить всё</button>
+      </div>
+      <div class="filter-sheet-body">
+        <div class="filter-section">
+          <span class="filter-section-title">Этап задачи</span>
+          <div id="filter-stage-options" class="filter-chip-grid"></div>
+        </div>
+        <div id="filter-pool-section" class="filter-section">
+          <span class="filter-section-title">Пул артикулов</span>
+          <div id="filter-pool-options" class="filter-chip-grid"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Task Detail Sheet Modal -->
+  <div id="modal-task" class="modal-overlay hidden">
+    <section class="modal-dialog task-sheet-dialog" role="dialog" aria-modal="true" aria-labelledby="task-detail-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="task-sheet-top-nav">
+        <div id="task-sheet-pool-badge" class="task-sheet-pool-chip"></div>
+        <div class="task-sheet-top-actions">
+          <div class="task-more-dropdown-wrap">
+            <button id="btn-task-more" class="icon-button" onclick="toggleTaskMoreMenu()" aria-label="Дополнительные действия" title="Меню задачи">
+              <svg class="icon"><use href="#i-more"/></svg>
+            </button>
+            <div id="task-more-menu" class="task-more-menu hidden"></div>
+          </div>
+          <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть задачу">
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="task-detail-content"></div>
+    </section>
+  </div>
+
+  <!-- Action Sheet Modal (Forms) -->
+  <div id="modal-action" class="modal-overlay hidden">
+    <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="action-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть форму"><svg class="icon"><use href="#i-close"/></svg></button>
+      <h2 id="action-title"></h2>
+      <p id="action-sku" class="sheet-subtitle"></p>
+      <form id="action-form" onsubmit="submitAction(event)">
+        <div id="action-fields" class="form-fields"></div>
+        <div id="action-error" class="form-error hidden" role="alert"></div>
+        <button id="action-submit" type="submit" class="btn btn-primary btn-wide"></button>
+      </form>
+    </section>
+  </div>
+
+  <!-- Add Batch (New Pool) Modal -->
+  <div id="modal-add-batch" class="modal-overlay hidden">
+    <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="batch-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть добавление пула"><svg class="icon"><use href="#i-close"/></svg></button>
+      <h2 id="batch-title">Новый пул</h2>
+      <form id="form-add-batch" onsubmit="submitAddBatch(event)">
+        <div class="form-fields">
+          <label class="field-label" for="batch-name">Название пула<input id="batch-name" type="text" required autocomplete="off" placeholder="Например: Пул №5Ц"></label>
+          <div>
+            <label class="field-label" for="batch-parent-url">Папка с исходниками</label>
+            <div class="scan-field">
+              <input id="batch-parent-url" type="url" required inputmode="url" placeholder="https://cloud.example.com/s/token...">
+              <button id="btn-scan" class="btn btn-secondary" type="button" onclick="autoScanCloudFolders()">Найти артикулы</button>
+            </div>
+          </div>
+          <div id="batch-analysis" class="batch-analysis hidden"></div>
+          <label class="field-label" for="batch-bitrix-url">Задача в Битрикс24<input id="batch-bitrix-url" type="url" inputmode="url" placeholder="https://...bitrix24.ru/.../tasks/task/view/..."></label>
+          <label class="field-label" for="batch-skus">
+            <span class="field-heading">Артикулы<span id="skus-counter" class="muted">0</span></span>
+            <textarea id="batch-skus" rows="5" required spellcheck="false" aria-describedby="skus-hint" placeholder="XT-20230916-11G3D-BLK&#10;XT-20230913-9G3D-NAVY"></textarea>
+            <span id="skus-hint" class="field-hint">Каждый с новой строки или через запятую</span>
+          </label>
+          <label class="field-label" for="batch-assignee">Назначить дизайнеру<span class="field-hint">Необязательно (по умолчанию в общий пул)</span>
+            <select id="batch-assignee" class="form-select" style="margin-top: 6px;">
+              <option value="">⚪ В общий пул (свободно)</option>
+            </select>
+          </label>
+        </div>
+        <div id="batch-error" class="form-error hidden" role="alert"></div>
+        <button id="btn-submit-batch" type="submit" class="btn btn-primary btn-wide">Создать задачи</button>
+      </form>
+    </section>
+  </div>
+
+  <!-- Edit Pool Modal -->
+  <div id="modal-edit-pool" class="modal-overlay hidden">
+    <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-pool-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть редактирование пула"><svg class="icon"><use href="#i-close"/></svg></button>
+      <h2 id="edit-pool-title">Редактирование пула</h2>
+      <div class="form-fields">
+        <div>
+          <label class="field-label" for="edit-pool-name">Название пула</label>
+          <div class="scan-field" style="margin-top: 8px;">
+            <input id="edit-pool-name" type="text" required autocomplete="off">
+            <button id="btn-save-pool-name" class="btn btn-primary" type="button" onclick="submitRenamePool()">Сохранить</button>
+          </div>
+        </div>
+        <div>
+          <label class="field-label" for="edit-pool-bitrix-url">Битрикс24</label>
+          <div class="scan-field" style="margin-top: 8px;">
+            <input id="edit-pool-bitrix-url" type="url" placeholder="https://...bitrix24.ru/.../tasks/task/view/..." inputmode="url">
+            <button id="btn-save-pool-bitrix" class="btn btn-secondary" type="button" onclick="submitSavePoolBitrix()">Сохранить</button>
+          </div>
+        </div>
+        <div>
+          <label class="field-label" for="edit-pool-new-skus">
+            <span class="field-heading">Добавить артикулы</span>
+          </label>
+          <textarea id="edit-pool-new-skus" rows="3" placeholder="Введите артикулы (каждый с новой строки или через запятую)" spellcheck="false" style="margin-top: 8px;"></textarea>
+          <label class="field-label" for="edit-pool-assignee" style="margin-top: 8px;">
+            <span class="field-heading">Назначить дизайнеру</span>
+            <span class="field-hint">Необязательно</span>
+            <select id="edit-pool-assignee" class="form-select" style="margin-top: 4px;">
+              <option value="">⚪ В общий пул (свободно)</option>
+            </select>
+          </label>
+          <div class="scan-field" style="margin-top: 8px;">
+            <input id="edit-pool-source-url" type="url" placeholder="Ссылка на фото (необязательно)" inputmode="url">
+            <button id="btn-add-skus-to-pool" class="btn btn-secondary" type="button" onclick="submitAddSkusToPool()">+ Добавить</button>
+          </div>
+        </div>
+        <div class="edit-pool-skus-section">
+          <div class="field-heading">
+            <span class="field-label" style="font-size: 15px;">Артикулы в пуле (<span id="edit-pool-skus-count">0</span>)</span>
+          </div>
+          <div id="edit-pool-skus-list" class="edit-pool-skus-list"></div>
+        </div>
+        <div class="pool-actions-danger" style="margin-top: 14px; display: flex; gap: 8px;">
+          <button id="btn-edit-pool-archive" class="btn btn-secondary btn-sm" type="button" onclick="toggleCurrentEditingPoolArchive()">
+            <svg class="icon" aria-hidden="true"><use href="#i-archive"/></svg><span id="btn-edit-pool-archive-label">В архив</span>
+          </button>
+          <button id="btn-edit-pool-delete" class="btn btn-danger btn-sm" type="button" onclick="confirmDeleteEditingPool()">
+            <svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg><span>Удалить пул</span>
+          </button>
+        </div>
+      </div>
+      <div id="edit-pool-error" class="form-error hidden" role="alert"></div>
+    </section>
+  </div>
+
+  <!-- Export Modal -->
+  <div id="modal-export" class="modal-overlay hidden">
+    <section class="modal-dialog export-dialog" role="dialog" aria-modal="true" aria-labelledby="export-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="export-dialog-header">
+        <h2 id="export-title">Экспорт отчетов</h2>
+        <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть экспорт"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="export-dialog-body">
+        <div class="export-section">
+          <div class="export-section-header">
+            <span class="export-section-title">Пулы для выгрузки</span>
+            <button id="btn-export-toggle-all" type="button" class="btn-link" onclick="toggleExportAllPools()">Выбрать все</button>
+          </div>
+          <div id="export-pools-list" class="export-pools-list">
+            <div class="muted" style="padding: 12px; text-align: center;">Загрузка пулов...</div>
+          </div>
+          <div id="export-pools-summary" class="export-pools-summary">
+            Выбрано пулов: 0
+          </div>
+        </div>
+        <div class="export-section">
+          <span class="export-section-title">Формат выгрузки</span>
+          <div class="export-format-selector">
+            <label class="format-option">
+              <input type="radio" name="export-format" value="excel" checked onchange="handleExportFormatChange(this.value)">
+              <span class="format-card">
+                <span class="format-icon">📗</span>
+                <span class="format-info">
+                  <span class="format-title">Excel (.xlsx)</span>
+                  <span class="format-desc">Файл в чат с ботом и на устройство</span>
+                </span>
+              </span>
+            </label>
+            <label class="format-option">
+              <input type="radio" name="export-format" value="google" onchange="handleExportFormatChange(this.value)">
+              <span class="format-card">
+                <span class="format-icon">📊</span>
+                <span class="format-info">
+                  <span class="format-title">Google Таблицы</span>
+                  <span class="format-desc">Через Apps Script Webhook</span>
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div id="export-google-section" class="export-google-section hidden">
+          <div class="export-section-header">
+            <label class="export-section-title" for="export-google-webhook">Ссылка Web App скрипта</label>
+            <button type="button" class="btn-link" onclick="openGoogleScriptGuide()">Инструкция и код</button>
+          </div>
+          <input id="export-google-webhook" class="export-input-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" spellcheck="false" autocomplete="off">
+          <label class="checkbox-row" for="export-google-save-default">
+            <input type="checkbox" id="export-google-save-default" checked>
+            <span>Сохранить эту ссылку по умолчанию</span>
+          </label>
+        </div>
+        <div id="export-guide-section" class="export-guide-section hidden">
+          <div class="guide-box">
+            <div class="guide-header">
+              <strong>Подключение Google Таблицы (1 мин):</strong>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="copyGoogleScriptCode()">📋 Скопировать код</button>
+            </div>
+            <ol class="guide-steps">
+              <li>В вашей Google Таблице откройте меню: <strong>Расширения ➔ Apps Script</strong>.</li>
+              <li>Удалите стандартный текст (<code>function myFunction</code>), <strong>вставьте скопированный код</strong> и нажмите 💾 <strong>Сохранить</strong> (Ctrl+S).</li>
+              <li>Вверху нажмите синюю кнопку <strong>«Начать развертывание» ➔ «Новое развертывание»</strong>.</li>
+              <li>Выберите тип: шестеренка ⚙️ ➔ <strong>«Веб-приложение»</strong>.</li>
+              <li>В поле «У кого есть доступ» обязательно укажите: <strong>«Все» (Anyone)</strong>, Запуск от: <strong>«Я»</strong>.</li>
+              <li>Нажмите <strong>«Развернуть»</strong>, разрешите доступ к аккаунту, скопируйте <strong>URL веб-приложения</strong> (заканчивается на <code>/exec</code>) и вставьте в поле выше.</li>
+            </ol>
+          </div>
+        </div>
+        <div id="export-error" class="export-error-card hidden" role="alert"></div>
+        <button id="btn-run-export" type="button" class="btn btn-primary btn-wide export-submit-btn" onclick="executeExport()">
+          Скачать Excel (.xlsx)
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Stats Modal -->
+  <div id="modal-stats" class="modal-overlay hidden">
+    <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="stats-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть статистику"><svg class="icon"><use href="#i-close"/></svg></button>
+      <h2 id="stats-title">Обзор команды</h2>
+      <div id="stats-content"></div>
+    </section>
+  </div>
+
+  <!-- Team Sheet Modal -->
+  <div id="modal-team" class="modal-overlay hidden">
+    <section class="modal-dialog team-dialog" role="dialog" aria-modal="true" aria-labelledby="team-title" tabindex="-1">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button class="modal-close icon-button" onclick="closeModal()" aria-label="Закрыть команду"><svg class="icon"><use href="#i-close"/></svg></button>
+      <div class="team-header-block">
+        <h2 id="team-title">Команда</h2>
+        <p id="team-meta-text" class="sheet-subtitle team-subtitle">0 участников · <span class="online-indicator">●</span> 0 онлайн</p>
+      </div>
+      <div class="team-action-grid">
+        <button id="btn-sync-team" class="team-action-card" type="button" onclick="syncTeamList()" title="Актуализировать состав по Telegram-группе">
+          <div class="tile-icon"><svg class="icon"><use href="#i-refresh"/></svg></div>
+          <div class="tile-content">
+            <strong class="tile-title">Синхронизировать</strong>
+            <span id="sync-team-status" class="tile-sub">по группе</span>
+          </div>
+        </button>
+        <button id="btn-backup-db" class="team-action-card" type="button" onclick="triggerBackup()" title="Создать резервную копию базы данных в Telegram">
+          <div class="tile-icon"><svg class="icon"><use href="#i-archive"/></svg></div>
+          <div class="tile-content">
+            <strong class="tile-title">Бэкап БД</strong>
+            <span id="backup-db-status" class="tile-sub">в Telegram-чат</span>
+          </div>
+        </button>
+      </div>
+      <div class="team-filters-row">
+        <button id="team-filter-all" class="team-role-pill active" onclick="setTeamRoleFilter('all')">Все <span id="team-badge-all">0</span></button>
+        <button id="team-filter-designer" class="team-role-pill" onclick="setTeamRoleFilter('designer')">Дизайнеры <span id="team-badge-designer">0</span></button>
+        <button id="team-filter-admin" class="team-role-pill" onclick="setTeamRoleFilter('admin')">Менеджеры <span id="team-badge-admin">0</span></button>
+      </div>
+      <div class="team-list-section">
+        <div id="team-group-overline" class="team-overline">УЧАСТНИКИ</div>
+        <div id="team-list" class="team-group-card"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>

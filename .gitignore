@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Node.js & Temporary Rendering
+node_modules/
+package.json
+package-lock.json
+temp_frames/
+test_sample_frames/
+*.mp4
+*.gif
+
+# Environment Variables & Credentials
+.env
+.env.*
+!.env.example
+authorized_key.json
+firstdvs.txt
+askpass.bat
+*.pem
+*.key
+
+# SQLite Database & Backups
+*.db
+*.db.*
+*.sqlite
+*.sqlite3
+
+# Temporary, Scratch & Showcase
+scratch/
+artifacts/
+sync_surf.py
+showcase_server.py
+print_user_msgs.py
+user_messages_history.txt
+capture_*.js
+record_*.js
+render_*.js
+test_*.js
+static/motion-*.html
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log

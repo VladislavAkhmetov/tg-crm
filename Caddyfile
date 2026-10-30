@@ -1,0 +1,21 @@
+{$APP_DOMAIN:crm.example.com} {
+    tls {$ACME_EMAIL:admin@example.com} {
+        ca https://acme-v02.api.letsencrypt.org/directory
+    }
+    log {
+        output stdout
+    }
+
+    encode gzip zstd
+
+    redir /surf /surf/ permanent
+
+    handle_path /surf/* {
+        root * /srv/surf
+        file_server
+    }
+
+    handle {
+        reverse_proxy app:8000
+    }
+}

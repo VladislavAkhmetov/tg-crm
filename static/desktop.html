@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101112">
+  <title>Таскер · Широкоэкранный дашборд</title>
+  <script src="/static/telegram-web-app.js"></script>
+  <script>
+    try {
+      if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+      }
+    } catch(e) {}
+  </script>
+  <link rel="stylesheet" href="/static/desktop.css?v=2.1.1">
+  <script src="/static/desktop.js?v=2.1.1" defer></script>
+</head>
+<body>
+
+  <!-- SVG Sprite -->
+  <svg class="svg-sprite hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+    <symbol id="i-compress" viewBox="0 0 24 24"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-figma" viewBox="0 0 24 24"><path d="M12 3H8.5a3.5 3.5 0 0 0 0 7H12V3Zm0 0h3.5a3.5 3.5 0 0 1 0 7H12M12 10H8.5a3.5 3.5 0 0 0 0 7H12v-7Zm0 7v3.5a3.5 3.5 0 1 1-3.5-3.5"/><circle cx="15.5" cy="13.5" r="3.5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6m0-6L10 14M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="i-stats" viewBox="0 0 24 24"><path d="M5 19V11M12 19V5M19 19V8"/></symbol>
+    <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2m2-15a3 3 0 0 1 0 6m1 3a5 5 0 0 1 3 4v2"/></symbol>
+    <symbol id="i-comment" viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 4V6a2 2 0 0 1 2-2Z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="2"/><rect x="14" y="4" width="6" height="6" rx="2"/><rect x="4" y="14" width="6" height="6" rx="2"/><rect x="14" y="14" width="6" height="6" rx="2"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Zm0 0v6h6M8 14h8M8 17h5"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+    <symbol id="i-unarchive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="m12 11 3 3m-3-3-3 3m3-3v6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6m4-6v6"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="i-bitrix" viewBox="0 0 24 24"><circle cx="12" cy="6.2" r="3.2"/><circle cx="6.5" cy="16.5" r="3.2"/><circle cx="17.5" cy="16.5" r="3.2"/></symbol>
+    <symbol id="i-mobile" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></symbol>
+  </svg>
+
+  <!-- Dev Bar -->
+  <div id="dev-bar" class="dev-bar hidden">
+    <span>Тестовый режим (Dev Mode): выберите пользователя</span>
+    <select id="dev-user" onchange="switchDevUser(this.value)">
+      <option value="admin">Админ (Тимлид)</option>
+      <option value="designer1">Анна (Дизайнер 1)</option>
+      <option value="designer2">Михаил (Дизайнер 2)</option>
+    </select>
+  </div>
+
+  <div class="app-layout">
+
+    <!-- 1. LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-group">
+          <div class="brand-mark">т.</div>
+          <div>
+            <div class="brand-title">Таскер <span style="font-size:11px; color:var(--accent);">Desktop</span></div>
+            <div class="brand-sub">Creative Studio CRM</div>
+          </div>
+        </div>
+        <a href="/static/index.html" class="mobile-view-link" title="Перейти к компактному мобильному виду">
+          <svg class="icon" style="width:13px; height:13px;"><use href="#i-mobile"/></svg>
+          <span>Мобильный</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-label">Задачи и фокус</div>
+        
+        <div class="nav-item active" id="nav-all" onclick="setScopeTab('all')">
+          <div class="nav-item-left">
+            <svg class="icon"><use href="#i-grid"/></svg>
+            <span>Все задачи</span>
+          </div>
+          <span class="nav-item-count" id="badge-nav-all">0</span>
+        </div>
+
+        <div class="nav-item" id="nav-my" onclick="setScopeTab('my')">
+          <div class="nav-item-left">
+            <svg class="icon"><use href="#i-team"/></svg>
+            <span>Мои в работе</span>
+          </div>
+          <span class="nav-item-count" id="badge-nav-my" style="color:var(--accent);">0</span>
+        </div>
+
+        <div class="nav-item" id="nav-revisions" onclick="setScopeTab('revisions')">
+          <div class="nav-item-left">
+            <svg class="icon" style="color:var(--stage-revision);"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Требуют правок</span>
+          </div>
+          <span class="nav-item-count" id="badge-nav-revisions" style="color:var(--stage-revision); background:var(--stage-revision-bg);">0</span>
+        </div>
+
+        <div class="nav-item" id="nav-available" onclick="setScopeTab('available')">
+          <div class="nav-item-left">
+            <svg class="icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Свободный пул</span>
+          </div>
+          <span class="nav-item-count" id="badge-nav-available">0</span>
+        </div>
+
+        <div class="nav-item" id="nav-archived" onclick="setScopeTab('archived')">
+          <div class="nav-item-left">
+            <svg class="icon"><use href="#i-archive"/></svg>
+            <span>В архиве</span>
+          </div>
+          <span class="nav-item-count" id="badge-nav-archived">0</span>
+        </div>
+
+        <div class="nav-label" style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Активные пулы</span>
+          <button id="btn-sidebar-add-pool" type="button" class="hidden" style="background:none; border:none; color:var(--accent); font-size:11px; cursor:pointer;" onclick="openAddBatchModal()">+ Пул</button>
+        </div>
+
+        <div class="pools-scroll-section" id="sidebar-pools-list"></div>
+
+        <div class="nav-label">Управление и студия</div>
+        <div id="nav-export-item" class="nav-item hidden" onclick="openExportModal()">
+          <div class="nav-item-left">
+            <svg class="icon"><use href="#i-download"/></svg>
+            <span>Экспорт отчетов</span>
+          </div>
+        </div>
+
+        <div id="nav-team-item" class="nav-item hidden" onclick="openTeamModal()">
+          <div class="nav-item-left">
+            <svg class="icon"><use href="#i-team"/></svg>
+            <span>Состав команды</span>
+          </div>
+        </div>
+
+        <div id="nav-backup-item" class="nav-item hidden" onclick="triggerBackup()">
+          <div class="nav-item-left">
+            <svg class="icon"><use href="#i-archive"/></svg>
+            <span>Бэкап БД в Telegram</span>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="user-avatar" id="user-avatar">??</div>
+          <div class="user-details">
+            <div class="user-name" id="user-name">Загрузка...</div>
+            <div class="user-sub" id="user-role-badge">...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. MAIN WORKSPACE -->
+    <main class="workspace">
+      
+      <!-- Top Workspace Bar -->
+      <header class="workspace-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="header-search-wrap">
+            <svg class="icon" style="color:#64748b;"><use href="#i-search"/></svg>
+            <input type="search" id="global-search" placeholder="Поиск SKU, пула или дизайнера..." oninput="handleSearch(this.value)">
+            <button id="search-clear-btn" class="icon-button hidden" onclick="clearSearch()" style="width:24px; height:24px;" aria-label="Очистить"><svg class="icon" style="width:14px; height:14px;"><use href="#i-close"/></svg></button>
+          </div>
+
+          <div class="view-switcher">
+            <button class="view-btn active" id="view-btn-kanban" onclick="switchView('kanban')">
+              <svg class="icon" style="width:13px; height:13px;"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+              <span>Канбан</span>
+            </button>
+            <button class="view-btn" id="view-btn-list" onclick="switchView('list')">
+              <svg class="icon" style="width:13px; height:13px;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span>Реестр</span>
+            </button>
+            <button class="view-btn" id="view-btn-analytics" onclick="switchView('analytics')">
+              <svg class="icon" style="width:13px; height:13px;"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              <span>Аналитика</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button id="btn-fullscreen" class="icon-button hidden" onclick="toggleFullscreen()" title="Во весь экран"><svg class="icon"><use href="#i-expand"/></svg></button>
+          <button class="btn btn-secondary btn-sm" onclick="loadTasks(true)" title="Обновить задачи">
+            <svg class="icon"><use href="#i-refresh"/></svg>
+            <span>Обновить</span>
+          </button>
+          <button id="btn-top-add-pool" class="btn btn-primary hidden" onclick="openAddBatchModal()">
+            <svg class="icon"><use href="#i-plus"/></svg>
+            <span>Добавить пул</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- KPI Pulse Bar -->
+      <section class="kpi-pulse-bar">
+        <div class="kpi-tile active" id="kpi-tile-all" onclick="filterByStage('all')">
+          <div>
+            <div class="kpi-title"><span class="kpi-dot" style="background:#cbd5e1;"></span> Всего в пайплайне</div>
+            <div class="kpi-value" id="kpi-total">0</div>
+          </div>
+        </div>
+        <div class="kpi-tile" id="kpi-tile-available" onclick="filterByStage('available')">
+          <div>
+            <div class="kpi-title"><span class="kpi-dot" style="background:var(--stage-available);"></span> ⚪ Свободно</div>
+            <div class="kpi-value" id="kpi-available">0</div>
+          </div>
+        </div>
+        <div class="kpi-tile" id="kpi-tile-in_progress" onclick="filterByStage('in_progress')">
+          <div>
+            <div class="kpi-title"><span class="kpi-dot" style="background:var(--stage-progress);"></span> 🟡 В работе</div>
+            <div class="kpi-value" id="kpi-in-progress" style="color:var(--stage-progress);">0</div>
+          </div>
+        </div>
+        <div class="kpi-tile" id="kpi-tile-internal_review" onclick="filterByStage('internal_review')">
+          <div>
+            <div class="kpi-title"><span class="kpi-dot" style="background:var(--stage-internal);"></span> 🔵 Ревью лида</div>
+            <div class="kpi-value" id="kpi-internal" style="color:var(--stage-internal);">0</div>
+          </div>
+        </div>
+        <div class="kpi-tile" id="kpi-tile-client_review" onclick="filterByStage('client_review')">
+          <div>
+            <div class="kpi-title"><span class="kpi-dot" style="background:var(--stage-client);"></span> 🟣 У заказчика</div>
+            <div class="kpi-value" id="kpi-client" style="color:var(--stage-client);">0</div>
+          </div>
+        </div>
+        <div class="kpi-tile" id="kpi-tile-completed" onclick="filterByStage('completed')">
+          <div>
+            <div class="kpi-title"><span class="kpi-dot" style="background:var(--stage-completed);"></span> ✅ Готово</div>
+            <div class="kpi-value" id="kpi-completed" style="color:var(--stage-completed);">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Content Area -->
+      <div class="content-area">
+
+        <!-- KANBAN VIEW -->
+        <section class="kanban-view" id="view-kanban">
+          <div class="kanban-column" data-stage="available">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title"><span style="color:var(--stage-available);">⚪</span> Свободно</div>
+              <span class="kanban-badge" id="kanban-count-available">0</span>
+            </div>
+            <div class="kanban-cards-scroll" id="col-cards-available"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="in_progress">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title"><span style="color:var(--stage-progress);">🟡</span> В работе</div>
+              <span class="kanban-badge" id="kanban-count-in_progress">0</span>
+            </div>
+            <div class="kanban-cards-scroll" id="col-cards-in_progress"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="internal_review">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title"><span style="color:var(--stage-internal);">🔵</span> Проверка лидом</div>
+              <span class="kanban-badge" id="kanban-count-internal_review">0</span>
+            </div>
+            <div class="kanban-cards-scroll" id="col-cards-internal_review"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="client_review">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title"><span style="color:var(--stage-client);">🟣</span> У заказчика</div>
+              <span class="kanban-badge" id="kanban-count-client_review">0</span>
+            </div>
+            <div class="kanban-cards-scroll" id="col-cards-client_review"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="export_ready">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title"><span style="color:var(--stage-export);">🟠</span> На экспорт</div>
+              <span class="kanban-badge" id="kanban-count-export_ready">0</span>
+            </div>
+            <div class="kanban-cards-scroll" id="col-cards-export_ready"></div>
+          </div>
+
+          <div class="kanban-column" data-stage="completed">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title"><span style="color:var(--stage-completed);">✅</span> Готово</div>
+              <span class="kanban-badge" id="kanban-count-completed">0</span>
+            </div>
+            <div class="kanban-cards-scroll" id="col-cards-completed"></div>
+          </div>
+        </section>
+
+        <!-- LIST VIEW -->
+        <section class="list-view hidden" id="view-list">
+          <div id="list-pools-container"></div>
+        </section>
+
+        <!-- ANALYTICS VIEW -->
+        <section class="analytics-view hidden" id="view-analytics">
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <div class="analytics-card-title">
+                <span>Загрузка исполнителей</span>
+                <span style="font-size:11px; color:var(--muted);">В работе и на проверке</span>
+              </div>
+              <div id="analytics-workload-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
+
+            <div class="analytics-card">
+              <div class="analytics-card-title">
+                <span>Воронка пайплайна</span>
+                <span style="font-size:11px; color:var(--accent);">Всего задач: <b id="funnel-total">0</b></span>
+              </div>
+              <div id="analytics-funnel-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
+
+            <div class="analytics-card">
+              <div class="analytics-card-title">
+                <span>Сводка по изображениям</span>
+                <span style="font-size:11px; color:var(--stage-internal);">Облачные исходники</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:12px; margin-top:4px;">
+                <div style="font-size:28px; font-weight:800; font-family:monospace; color:#38bdf8;" id="analytics-total-images">0</div>
+                <div style="font-size:12px; color:var(--muted);">Суммарное количество сгенерированных карточек по артикулам</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. RIGHT SLIDE-OVER DRAWER (MASTER-DETAIL) -->
+        <aside class="drawer-panel closed" id="task-drawer">
+          <div class="drawer-header">
+            <div class="drawer-title-group">
+              <span class="drawer-sku" id="drawer-sku">—</span>
+              <button class="btn btn-secondary btn-sm" onclick="copyCurrentSku()" title="Скопировать артикул">
+                <svg class="icon" style="width:13px; height:13px;"><use href="#i-copy"/></svg>
+                <span>Копировать</span>
+              </button>
+            </div>
+            <button class="drawer-close" onclick="closeDrawer()" title="Закрыть">
+              <svg class="icon"><use href="#i-close"/></svg>
+            </button>
+          </div>
+
+          <div class="drawer-body">
+            <div id="drawer-status-pill" class="status-select-pill">
+              <span id="drawer-status-dot">⚪</span>
+              <span id="drawer-status-name">Свободно</span>
+            </div>
+
+            <div class="drawer-section">
+              <div class="drawer-section-title">Пул и исполнитель</div>
+              <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="color:var(--muted);">Пул:</span>
+                  <strong id="drawer-pool-name">—</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="color:var(--muted);">Исполнитель:</span>
+                  <strong id="drawer-assignee">—</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="color:var(--muted);">Кол-во фото:</span>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <strong id="drawer-images-count" style="color:var(--accent);">—</strong>
+                    <button id="btn-drawer-edit-images" class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:11px;" onclick="openImagesCountAction()">Изменить</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="drawer-section">
+              <div class="drawer-section-title">Ссылки на материалы</div>
+              <div class="resource-grid">
+                <a class="res-card" id="drawer-link-source" href="#" target="_blank" rel="noopener noreferrer">
+                  <svg class="icon" style="color:#38bdf8;"><use href="#i-folder"/></svg>
+                  <span>Папка с фото</span>
+                </a>
+                <a class="res-card" id="drawer-link-figma" href="#" target="_blank" rel="noopener noreferrer">
+                  <svg class="icon" style="color:#c084fc;"><use href="#i-figma"/></svg>
+                  <span id="drawer-figma-label">Макет в Figma</span>
+                </a>
+                <a class="res-card hidden" id="drawer-link-client-figma" href="#" target="_blank" rel="noopener noreferrer">
+                  <svg class="icon" style="color:#c084fc;"><use href="#i-figma"/></svg>
+                  <span>Figma заказчика</span>
+                </a>
+                <a class="res-card hidden" id="drawer-link-disk" href="#" target="_blank" rel="noopener noreferrer">
+                  <svg class="icon" style="color:#4ade80;"><use href="#i-file"/></svg>
+                  <span>Финалы на Диске</span>
+                </a>
+                <a class="res-card hidden" id="drawer-link-bitrix" href="#" target="_blank" rel="noopener noreferrer">
+                  <svg class="icon" style="color:#0284c7;"><use href="#i-bitrix"/></svg>
+                  <span>Битрикс24 (трекинг)</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="drawer-section" id="drawer-notes-section">
+              <div class="drawer-section-title">
+                <span>Замечания и правки</span>
+                <span id="drawer-notes-badge" style="font-size:10.5px; color:var(--stage-revision);"></span>
+              </div>
+              <div id="drawer-notes-text" style="font-size:12.5px; line-height:1.45; color:#e2e8f0; background:rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px;"></div>
+            </div>
+          </div>
+
+          <div class="drawer-actions" id="drawer-actions"></div>
+        </aside>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ACTION MODAL (все 8 видов действий: internal, client, export, complete, reject, return, images, assign) -->
+  <div id="modal-action" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-action')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="action-title">Действие над задачей</h2>
+        <button class="drawer-close" onclick="closeModal('modal-action')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <p id="action-sku" class="muted" style="margin-bottom:12px; font-family:monospace; font-weight:700;"></p>
+      <form id="action-form" onsubmit="submitAction(event)">
+        <div id="action-fields"></div>
+        <div id="action-error" class="form-error hidden"></div>
+        <button id="action-submit" type="submit" class="btn btn-primary btn-wide" style="margin-top:14px;"></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD BATCH POOL MODAL -->
+  <div id="modal-add-batch" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-add-batch')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="batch-title">Новый пул</h2>
+        <button class="drawer-close" onclick="closeModal('modal-add-batch')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <form id="form-add-batch" onsubmit="submitAddBatch(event)">
+        <div class="form-group">
+          <label for="batch-name">Название пула *</label>
+          <input id="batch-name" class="form-control" type="text" required autocomplete="off" placeholder="Например: Columbia Outdoor 2026">
+        </div>
+        <div class="form-group">
+          <label for="batch-parent-url">Папка с исходниками (Nextcloud / WebDAV) *</label>
+          <div style="display:flex; gap:8px;">
+            <input id="batch-parent-url" class="form-control" type="url" required placeholder="https://cloud.example.com/s/token...">
+            <button id="btn-scan" class="btn btn-secondary" type="button" onclick="autoScanCloudFolders()">Найти артикулы</button>
+          </div>
+        </div>
+        <div id="batch-analysis" class="batch-analysis hidden" style="margin-bottom:10px;"></div>
+        <div class="form-group">
+          <label for="batch-bitrix-url">Битрикс24 (трекинг времени)</label>
+          <input id="batch-bitrix-url" class="form-control" type="url" placeholder="https://...bitrix24.ru/.../tasks/task/view/...">
+        </div>
+        <div class="form-group">
+          <label for="batch-skus" style="display:flex; justify-content:space-between;">
+            <span>Артикулы *</span>
+            <span id="skus-counter" class="muted">0</span>
+          </label>
+          <textarea id="batch-skus" class="form-control" rows="5" required style="font-family:monospace;" placeholder="129829OUT-99&#10;130450DEM-01"></textarea>
+          <span style="font-size:11px; color:var(--muted); margin-top:2px;">Каждый с новой строки или через запятую</span>
+        </div>
+        <div class="form-group">
+          <label for="batch-assignee">Назначить дизайнеру</label>
+          <select id="batch-assignee" class="form-control">
+            <option value="">⚪ В общий пул (свободно)</option>
+          </select>
+        </div>
+        <div id="batch-error" class="form-error hidden"></div>
+        <button id="btn-submit-batch" type="submit" class="btn btn-primary btn-wide" style="margin-top:14px;">Создать задачи и уведомить чат</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT POOL MODAL -->
+  <div id="modal-edit-pool" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-edit-pool')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="edit-pool-title">Редактирование пула</h2>
+        <button class="drawer-close" onclick="closeModal('modal-edit-pool')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="form-group">
+        <label for="edit-pool-name">Название пула</label>
+        <div style="display:flex; gap:8px;">
+          <input id="edit-pool-name" class="form-control" type="text" required>
+          <button id="btn-save-pool-name" class="btn btn-primary" type="button" onclick="submitRenamePool()">Сохранить</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="edit-pool-bitrix-url">Битрикс24</label>
+        <div style="display:flex; gap:8px;">
+          <input id="edit-pool-bitrix-url" class="form-control" type="url" placeholder="https://...bitrix24.ru/...">
+          <button id="btn-save-pool-bitrix" class="btn btn-secondary" type="button" onclick="submitSavePoolBitrix()">Сохранить</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="edit-pool-new-skus">Добавить артикулы в пул</label>
+        <textarea id="edit-pool-new-skus" class="form-control" rows="3" placeholder="Артикулы (по одному или через запятую)" style="font-family:monospace;"></textarea>
+        <label for="edit-pool-assignee" style="margin-top:6px; font-size:12px; color:var(--muted);">Назначить дизайнеру:</label>
+        <select id="edit-pool-assignee" class="form-control" style="margin-top:2px;">
+          <option value="">⚪ В общий пул (свободно)</option>
+        </select>
+        <div style="display:flex; gap:8px; margin-top:6px;">
+          <input id="edit-pool-source-url" class="form-control" type="url" placeholder="Ссылка на фото (необязательно)">
+          <button id="btn-add-skus-to-pool" class="btn btn-secondary" type="button" onclick="submitAddSkusToPool()">+ Добавить</button>
+        </div>
+      </div>
+      <div class="edit-pool-skus-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:13px; font-weight:700;">Артикулы в пуле (<span id="edit-pool-skus-count">0</span>)</span>
+        </div>
+        <div id="edit-pool-skus-list" class="edit-pool-skus-list"></div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:8px;">
+        <button id="btn-edit-pool-archive" class="btn btn-secondary btn-sm" type="button" onclick="toggleCurrentEditingPoolArchive()">
+          <svg class="icon"><use href="#i-archive"/></svg><span id="btn-edit-pool-archive-label">В архив</span>
+        </button>
+        <button id="btn-edit-pool-delete" class="btn btn-danger btn-sm" type="button" onclick="confirmDeleteEditingPool()">
+          <svg class="icon"><use href="#i-trash"/></svg><span>Удалить пул</span>
+        </button>
+      </div>
+      <div id="edit-pool-error" class="form-error hidden" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- EXPORT MODAL (Excel + Google Sheets) -->
+  <div id="modal-export" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-export')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="export-title">Экспорт отчетов</h2>
+        <button class="drawer-close" onclick="closeModal('modal-export')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="form-group">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:12.5px; font-weight:700;">Пулы для выгрузки</span>
+          <button id="btn-export-toggle-all" type="button" class="btn-ghost btn-sm" style="color:var(--accent);" onclick="toggleExportAllPools()">Выбрать все</button>
+        </div>
+        <div id="export-pools-list" style="max-height:180px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; background:var(--surface); padding:8px; border-radius:8px; border:1px solid var(--border);"></div>
+        <div id="export-pools-summary" style="font-size:11.5px; color:var(--muted); margin-top:4px;">Выбрано пулов: 0</div>
+      </div>
+      <div class="form-group">
+        <label>Формат выгрузки</label>
+        <div class="export-format-selector">
+          <label class="format-option">
+            <input type="radio" name="export-format" value="excel" checked onchange="handleExportFormatChange(this.value)">
+            <span class="format-card">
+              <span>📗</span>
+              <span class="format-info"><span class="format-title">Excel (.xlsx)</span><span class="format-desc">В чат бота и файл</span></span>
+            </span>
+          </label>
+          <label class="format-option">
+            <input type="radio" name="export-format" value="google" onchange="handleExportFormatChange(this.value)">
+            <span class="format-card">
+              <span>📊</span>
+              <span class="format-info"><span class="format-title">Google Таблицы</span><span class="format-desc">Apps Script Webhook</span></span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div id="export-google-section" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <label for="export-google-webhook" style="font-size:12px; color:var(--muted);">URL Web App скрипта</label>
+          <button type="button" class="btn-ghost btn-sm" style="color:var(--accent);" onclick="openGoogleScriptGuide()">Инструкция и код</button>
+        </div>
+        <input id="export-google-webhook" class="form-control" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+        <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); margin-top:6px; cursor:pointer;">
+          <input type="checkbox" id="export-google-save-default" checked>
+          <span>Сохранить эту ссылку по умолчанию</span>
+        </label>
+      </div>
+      <div id="export-guide-section" class="hidden" style="margin-top:10px;">
+        <div class="guide-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <strong>Подключение Google Таблицы:</strong>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="copyGoogleScriptCode()">📋 Копировать код</button>
+          </div>
+          <ol class="guide-steps">
+            <li>В таблице: Расширения ➔ Apps Script.</li>
+            <li>Вставьте скопированный код и сохраните (Ctrl+S).</li>
+            <li>«Начать развертывание» ➔ «Новое развертывание» ➔ «Веб-приложение».</li>
+            <li>Доступ: «Все» (Anyone), Запуск от «Я». Скопируйте ссылку и вставьте выше.</li>
+          </ol>
+        </div>
+      </div>
+      <div id="export-error" class="form-error hidden" style="margin-top:10px;"></div>
+      <button id="btn-run-export" type="button" class="btn btn-primary btn-wide" style="margin-top:14px;" onclick="executeExport()">Скачать Excel (.xlsx)</button>
+    </div>
+  </div>
+
+  <!-- TEAM MODAL -->
+  <div id="modal-team" class="modal-overlay hidden" onclick="if(event.target===this) closeModal('modal-team')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="team-title">Команда студии</h2>
+        <button class="drawer-close" onclick="closeModal('modal-team')"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <button id="btn-sync-team" class="btn btn-secondary btn-sm" type="button" onclick="syncTeamList()" title="Синхронизировать состав по Telegram-группе">
+          <svg class="icon"><use href="#i-refresh"/></svg><span>Синхронизировать</span>
+        </button>
+        <button id="btn-backup-db" class="btn btn-secondary btn-sm" type="button" onclick="triggerBackup()" title="Создать резервную копию базы данных в Telegram">
+          <svg class="icon"><use href="#i-archive"/></svg><span>Бэкап БД</span>
+        </button>
+      </div>
+      <div id="team-list" style="max-height:300px; overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+</body>
+</html>

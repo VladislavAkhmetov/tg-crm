@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+.env
+authorized_key.json
+crm.db
+*.db
+*.db.*
+.git/
+artifacts/
+tests/
+scratch/
